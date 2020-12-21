@@ -5,12 +5,18 @@
   "description": "",
   "scripts": {
     "start": "webpack serve",
-    "build": "webpack --env production --progress"
+    "build": "webpack --env production --progress",
+    "build:analyze": "webpack --env production --progress=profile --analyze"
   },
   "keywords": [],
   "author": "",
   "license": "MIT",
   "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/plugin-transform-react-constant-elements": "^7.12.1",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/preset-react": "^7.12.10",
+    "babel-loader": "^8.2.2",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^7.0.0",
     "css-loader": "^5.0.1",
@@ -22,9 +28,15 @@
     "style-loader": "^2.0.0",
     "toml": "^3.0.0",
     "webpack": "^5.11.0",
+    "webpack-bundle-analyzer": "^4.3.0",
     "webpack-cli": "^4.2.0",
     "webpack-dev-server": "^3.11.0",
     "xml-loader": "^1.2.1",
     "yamljs": "^0.3.0"
+  },
+  "dependencies": {
+    "core-js": "^3.8.1",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1"
   }
 }

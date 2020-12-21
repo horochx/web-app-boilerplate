@@ -25,11 +25,18 @@ module.exports = env => {
     output: {
       path: path.resolve(__dirname, "dist"),
       filename: !isEnvProduction ? "[name].bundle.js" : "js/[name].[contenthash].js",
+      assetModuleFilename: !isEnvProduction ? "assets/[name][ext]" : "assets/[name][contenthash][ext]",
       publicPath: "./",
     },
 
     module: {
       rules: [
+        {
+          test: /\.m?jsx?$/,
+          include,
+          use: ["babel-loader"],
+        },
+
         {
           test: /\.css$/i,
           include,
@@ -90,6 +97,7 @@ module.exports = env => {
     },
 
     resolve: {
+      extensions: [".js", ".jsx"],
       symlinks: false,
     },
 
@@ -105,9 +113,9 @@ module.exports = env => {
     },
 
     plugins: [
-      new CleanWebpackPlugin(),
+      !isEnvProduction ? void 0 : new CleanWebpackPlugin(),
 
-      new CopyPlugin({
+      !isEnvProduction ? void 0 : new CopyPlugin({
         patterns: [
           { from: "public" },
         ],
@@ -115,6 +123,7 @@ module.exports = env => {
 
       new HtmlWebpackPlugin({
         title: "Hello webpack",
+        template: "./src/template/index.ejs",
         chunks: ["main"],
         filename: "index.html",
       }),
