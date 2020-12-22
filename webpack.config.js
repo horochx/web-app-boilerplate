@@ -4,6 +4,7 @@ const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 
 const toml = require("toml");
 const yaml = require("yamljs");
@@ -34,7 +35,14 @@ module.exports = env => {
         {
           test: /\.m?jsx?$/,
           include,
-          use: ["babel-loader"],
+          use: [
+            {
+              loader: "babel-loader",
+              options: {
+                envName: !isEnvProduction ? "development" : "production",
+              },
+            },
+          ],
         },
 
         {
@@ -103,6 +111,8 @@ module.exports = env => {
 
     devtool: !isEnvProduction ? "eval-cheap-module-source-map" : false,
 
+    target: "web",
+
     devServer: {
       proxy: {
         "/api": "http://localhost:3000",
@@ -134,6 +144,8 @@ module.exports = env => {
       }),
 
       !isEnvProduction ? void 0 : new MiniCssExtractPlugin({ filename: "css/[name].[contenthash].css" }),
+
+      !isEnvProduction ? new ReactRefreshWebpackPlugin() : void 0,
     ].filter(Boolean),
 
     optimization: {

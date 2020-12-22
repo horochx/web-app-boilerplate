@@ -4,7 +4,7 @@
   "private": true,
   "description": "",
   "scripts": {
-    "start": "webpack serve",
+    "start": "webpack serve --progress",
     "build": "webpack --env production --progress",
     "build:analyze": "webpack --env production --progress=profile --analyze"
   },
@@ -16,6 +16,7 @@
     "@babel/plugin-transform-react-constant-elements": "^7.12.1",
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-react": "^7.12.10",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.4.3",
     "babel-loader": "^8.2.2",
     "clean-webpack-plugin": "^3.0.0",
     "copy-webpack-plugin": "^7.0.0",
@@ -25,6 +26,7 @@
     "html-webpack-plugin": "^4.5.0",
     "json5": "^2.1.3",
     "mini-css-extract-plugin": "^1.3.3",
+    "react-refresh": "^0.9.0",
     "style-loader": "^2.0.0",
     "toml": "^3.0.0",
     "webpack": "^5.11.0",
