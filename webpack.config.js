@@ -105,6 +105,10 @@ module.exports = env => {
     },
 
     resolve: {
+      alias: {
+        "assets": path.join(__dirname, "src/assets"),
+        "lib": path.join(__dirname, "src/lib"),
+      },
       extensions: [".js", ".jsx"],
       symlinks: false,
     },
