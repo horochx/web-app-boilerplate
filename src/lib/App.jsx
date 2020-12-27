@@ -1,10 +1,5 @@
 import React, { Suspense } from "react";
-import {
-  HashRouter as Router,
-  Switch,
-  Route,
-  Link,
-} from "react-router-dom";
+import { HashRouter as Router, Switch, Route, Link } from "react-router-dom";
 
 const Example = React.lazy(() => import("lib/component/Example"));
 

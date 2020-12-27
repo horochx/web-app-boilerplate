@@ -12,7 +12,7 @@ const json5 = require("json5");
 
 const include = path.resolve(__dirname, "src");
 
-module.exports = env => {
+module.exports = (env) => {
   const isEnvProduction = !!env.production;
 
   return {
@@ -25,8 +25,12 @@ module.exports = env => {
 
     output: {
       path: path.resolve(__dirname, "dist"),
-      filename: !isEnvProduction ? "[name].bundle.js" : "js/[name].[contenthash].js",
-      assetModuleFilename: !isEnvProduction ? "assets/[name][ext]" : "assets/[name][contenthash][ext]",
+      filename: !isEnvProduction
+        ? "[name].bundle.js"
+        : "js/[name].[contenthash].js",
+      assetModuleFilename: !isEnvProduction
+        ? "assets/[name][ext]"
+        : "assets/[name][contenthash][ext]",
       publicPath: "./",
     },
 
@@ -48,7 +52,10 @@ module.exports = env => {
         {
           test: /\.css$/i,
           include,
-          use: [!isEnvProduction ? "style-loader" : MiniCssExtractPlugin.loader, "css-loader"],
+          use: [
+            !isEnvProduction ? "style-loader" : MiniCssExtractPlugin.loader,
+            "css-loader",
+          ],
         },
 
         {
@@ -106,8 +113,8 @@ module.exports = env => {
 
     resolve: {
       alias: {
-        "assets": path.join(__dirname, "src/assets"),
-        "lib": path.join(__dirname, "src/lib"),
+        assets: path.join(__dirname, "src/assets"),
+        lib: path.join(__dirname, "src/lib"),
       },
       extensions: [".js", ".jsx"],
       symlinks: false,
@@ -129,15 +136,15 @@ module.exports = env => {
     plugins: [
       !isEnvProduction ? void 0 : new CleanWebpackPlugin(),
 
-      !isEnvProduction ? void 0 : new CopyPlugin({
-        patterns: [
-          { from: "public" },
-        ],
-      }),
+      !isEnvProduction
+        ? void 0
+        : new CopyPlugin({
+            patterns: [{ from: "public" }],
+          }),
 
       new HtmlWebpackPlugin({
         title: "Hello webpack",
-        template: "./src/template/index.ejs",
+        template: "./src/template/index.html",
         chunks: ["main"],
         filename: "index.html",
       }),
@@ -147,7 +154,11 @@ module.exports = env => {
         filename: "login.html",
       }),
 
-      !isEnvProduction ? void 0 : new MiniCssExtractPlugin({ filename: "css/[name].[contenthash].css" }),
+      !isEnvProduction
+        ? void 0
+        : new MiniCssExtractPlugin({
+            filename: "css/[name].[contenthash].css",
+          }),
 
       !isEnvProduction ? new ReactRefreshWebpackPlugin() : void 0,
     ].filter(Boolean),
@@ -156,15 +167,17 @@ module.exports = env => {
       runtimeChunk: "single",
       minimize: isEnvProduction,
       minimizer: !isEnvProduction ? void 0 : ["...", new CssMinimizerPlugin()],
-      splitChunks: !isEnvProduction ? false : {
-        cacheGroups: {
-          vendor: {
-            test: /[\\/]node_modules[\\/]/,
-            name: "vendors",
-            chunks: "all",
+      splitChunks: !isEnvProduction
+        ? false
+        : {
+            cacheGroups: {
+              vendor: {
+                test: /[\\/]node_modules[\\/]/,
+                name: "vendors",
+                chunks: "all",
+              },
+            },
           },
-        },
-      },
     },
   };
 };
