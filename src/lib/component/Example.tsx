@@ -1,5 +1,6 @@
 import React, { memo } from "react";
 import "./Example.css";
+
 import logo from "assets/img/logo.svg";
 
 function Example() {

@@ -19,8 +19,7 @@ module.exports = (env) => {
     mode: !isEnvProduction ? "development" : "production",
 
     entry: {
-      main: "./src/entry/main.js",
-      login: "./src/entry/login.js",
+      main: "./src/entry/main.tsx",
     },
 
     output: {
@@ -37,7 +36,7 @@ module.exports = (env) => {
     module: {
       rules: [
         {
-          test: /\.m?jsx?$/,
+          test: /\.[jt]sx?$/,
           include,
           use: [
             {
@@ -116,7 +115,7 @@ module.exports = (env) => {
         assets: path.join(__dirname, "src/assets"),
         lib: path.join(__dirname, "src/lib"),
       },
-      extensions: [".js", ".jsx"],
+      extensions: [".ts", ".tsx", ".js", ".jsx"],
       symlinks: false,
     },
 
@@ -147,11 +146,6 @@ module.exports = (env) => {
         template: "./src/template/index.html",
         chunks: ["main"],
         filename: "index.html",
-      }),
-      new HtmlWebpackPlugin({
-        title: "Login",
-        chunks: ["login"],
-        filename: "login.html",
       }),
 
       !isEnvProduction
