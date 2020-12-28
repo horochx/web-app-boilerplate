@@ -54,6 +54,7 @@ module.exports = (env) => {
           use: [
             !isEnvProduction ? "style-loader" : MiniCssExtractPlugin.loader,
             "css-loader",
+            "postcss-loader",
           ],
         },
 
