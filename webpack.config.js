@@ -52,7 +52,14 @@ module.exports = (env) => {
           test: /\.css$/i,
           include,
           use: [
-            !isEnvProduction ? "style-loader" : MiniCssExtractPlugin.loader,
+            !isEnvProduction
+              ? "style-loader"
+              : {
+                  loader: MiniCssExtractPlugin.loader,
+                  options: {
+                    publicPath: "../",
+                  },
+                },
             "css-loader",
             "postcss-loader",
           ],
