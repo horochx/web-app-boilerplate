@@ -1,5 +1,5 @@
 import React, { memo } from "react";
-import "./Example.css";
+import "./Example.scss";
 
 import logo from "assets/img/logo.svg";
 

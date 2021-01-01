@@ -20,6 +20,19 @@ const include = path.resolve(__dirname, "src");
 module.exports = (env) => {
   const isEnvProduction = !!env.production;
 
+  const cssLoaders = [
+    !isEnvProduction
+      ? "style-loader"
+      : {
+          loader: MiniCssExtractPlugin.loader,
+          options: {
+            publicPath: "../",
+          },
+        },
+    "css-loader",
+    "postcss-loader",
+  ];
+
   return {
     mode: !isEnvProduction ? "development" : "production",
 
@@ -56,18 +69,13 @@ module.exports = (env) => {
         {
           test: /\.css$/i,
           include,
-          use: [
-            !isEnvProduction
-              ? "style-loader"
-              : {
-                  loader: MiniCssExtractPlugin.loader,
-                  options: {
-                    publicPath: "../",
-                  },
-                },
-            "css-loader",
-            "postcss-loader",
-          ],
+          use: cssLoaders,
+        },
+
+        {
+          test: /\.s[ac]ss$/i,
+          include,
+          use: [...cssLoaders, "sass-loader"],
         },
 
         {
