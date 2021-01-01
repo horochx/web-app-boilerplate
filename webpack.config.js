@@ -1,10 +1,15 @@
+const fs = require("fs");
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
+const { DefinePlugin } = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
+
+const dotenv = require("dotenv");
+const envConfig = dotenv.parse(fs.readFileSync(".env"));
 
 const toml = require("toml");
 const yaml = require("yamljs");
@@ -148,6 +153,13 @@ module.exports = (env) => {
         : new CopyPlugin({
             patterns: [{ from: "public" }],
           }),
+
+      new DefinePlugin({
+        ...Object.entries(envConfig).reduce((obj, [key, val]) => {
+          obj[`process.env.${key}`] = JSON.stringify(val);
+          return obj;
+        }, {}),
+      }),
 
       new HtmlWebpackPlugin({
         title: "Hello webpack",

@@ -38,6 +38,7 @@
     "css-loader": "^5.0.1",
     "css-minimizer-webpack-plugin": "^1.1.5",
     "csv-loader": "^3.0.3",
+    "dotenv": "^8.2.0",
     "html-webpack-plugin": "^4.5.0",
     "husky": "^5.0.6",
     "json5": "^2.1.3",
