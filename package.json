@@ -4,6 +4,7 @@
   "private": true,
   "description": "",
   "scripts": {
+    "postinstall": "husky install",
     "prepublishOnly": "pinst --disable",
     "postpublish": "pinst --enable",
     "start": "webpack serve --progress",
