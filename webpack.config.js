@@ -7,6 +7,7 @@ const { DefinePlugin } = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
+const { GenerateSW } = require("workbox-webpack-plugin");
 
 const dotenv = require("dotenv");
 const envConfig = dotenv.parse(fs.readFileSync(".env"));
@@ -183,6 +184,13 @@ module.exports = (env) => {
           }),
 
       !isEnvProduction ? new ReactRefreshWebpackPlugin() : void 0,
+
+      !isEnvProduction
+        ? void 0
+        : new GenerateSW({
+            clientsClaim: true,
+            skipWaiting: false,
+          }),
     ].filter(Boolean),
 
     optimization: {
