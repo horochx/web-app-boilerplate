@@ -147,9 +147,15 @@ module.exports = (env) => {
 
     devServer: {
       proxy: {
-        "/api": "http://localhost:3000",
+        "/api": {
+          target: "http://localhost:3000",
+          changeOrigin: true,
+          secure: false,
+        },
       },
+      publicPath: "/",
       contentBase: path.join(__dirname, "public"),
+      disableHostCheck: true,
       open: true,
       hot: true,
     },
