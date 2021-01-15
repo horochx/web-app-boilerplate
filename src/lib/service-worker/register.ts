@@ -10,7 +10,18 @@ export function register(updateCallback?: (skipWaiting: () => void) => void) {
 
       checkUpdateLoop(reg);
 
-      handleControllerChange();
+      // skip controllerchange from first install
+      if (!reg.active && reg.installing) {
+        reg.installing!.addEventListener("statechange", function () {
+          if (this.state === "installed") {
+            setTimeout(() => {
+              handleControllerChange();
+            }, 0);
+          }
+        });
+      } else {
+        handleControllerChange();
+      }
     }, 0);
   });
 
