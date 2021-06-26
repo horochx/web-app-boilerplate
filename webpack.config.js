@@ -1,219 +1,166 @@
 const fs = require("fs");
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const CopyPlugin = require("copy-webpack-plugin");
 const { DefinePlugin } = require("webpack");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const CssMinimizerPlugin = require("css-minimizer-webpack-plugin");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
-const { GenerateSW } = require("workbox-webpack-plugin");
 
-const dotenv = require("dotenv");
-const envConfig = dotenv.parse(fs.readFileSync(".env"));
+const envConfig = require("dotenv").parse(fs.readFileSync(".env"));
 
-const toml = require("toml");
-const yaml = require("yamljs");
-const json5 = require("json5");
+const exclude = /node_modules/;
 
-const include = path.resolve(__dirname, "src");
+const isDev = process.env.NODE_ENV !== "production";
 
-module.exports = (env) => {
-  const isEnvProduction = !!env.production;
+module.exports = {
+  mode: isDev ? "development" : "production",
 
-  const cssLoaders = [
-    !isEnvProduction
-      ? "style-loader"
-      : {
-          loader: MiniCssExtractPlugin.loader,
-          options: {
-            publicPath: "../",
-          },
-        },
-    "css-loader",
-    "postcss-loader",
-  ];
+  target: isDev ? "web" : "browserslist",
 
-  return {
-    mode: !isEnvProduction ? "development" : "production",
+  entry: {
+    index: "./src/index.tsx",
+  },
 
-    entry: {
-      main: "./src/entry/main.tsx",
-    },
+  output: {
+    path: path.join(__dirname, "dist"),
+    publicPath: "",
+    hashDigestLength: 8,
+    filename: isDev ? "js/[name].js" : "js/[name].[contenthash].js",
+    assetModuleFilename: isDev
+      ? "assets/[name][ext]"
+      : "assets/[name].[contenthash][ext]",
+    clean: true,
+  },
 
-    output: {
-      path: path.resolve(__dirname, "dist"),
-      filename: !isEnvProduction
-        ? "[name].bundle.js"
-        : "js/[name].[contenthash].js",
-      assetModuleFilename: !isEnvProduction
-        ? "assets/[name][ext]"
-        : "assets/[name][contenthash][ext]",
-      publicPath: "./",
-    },
-
-    module: {
-      rules: [
-        {
-          test: /\.[jt]sx?$/,
-          include,
-          use: [
-            {
-              loader: "babel-loader",
-              options: {
-                envName: !isEnvProduction ? "development" : "production",
-              },
-            },
-          ],
-        },
-
-        {
-          test: /\.css$/i,
-          include,
-          use: cssLoaders,
-        },
-
-        {
-          test: /\.s[ac]ss$/i,
-          include,
-          use: [...cssLoaders, "sass-loader"],
-        },
-
-        {
-          test: /\.(png|svg|jpg|jpeg|gif)$/i,
-          include,
-          type: "asset/resource",
-        },
-
-        {
-          test: /\.(woff|woff2|eot|ttf|otf)$/i,
-          include,
-          type: "asset/resource",
-        },
-
-        {
-          test: /\.(csv|tsv)$/i,
-          include,
-          use: ["csv-loader"],
-        },
-
-        {
-          test: /\.xml$/i,
-          include,
-          use: ["xml-loader"],
-        },
-
-        {
-          test: /\.toml$/i,
-          include,
-          type: "json",
-          parser: {
-            parse: toml.parse,
-          },
-        },
-
-        {
-          test: /\.yaml$/i,
-          include,
-          type: "json",
-          parser: {
-            parse: yaml.parse,
-          },
-        },
-
-        {
-          test: /\.json5$/i,
-          include,
-          type: "json",
-          parser: {
-            parse: json5.parse,
-          },
-        },
-      ],
-    },
-
-    resolve: {
-      alias: {
-        assets: path.join(__dirname, "src/assets"),
-        lib: path.join(__dirname, "src/lib"),
-      },
-      extensions: [".ts", ".tsx", ".js", ".jsx"],
-      symlinks: false,
-    },
-
-    devtool: !isEnvProduction ? "eval-cheap-module-source-map" : false,
-
-    target: "web",
-
-    devServer: {
-      proxy: {
-        "/api": {
-          target: "http://localhost:3000",
-          changeOrigin: true,
-          secure: false,
-        },
-      },
-      publicPath: "/",
-      contentBase: path.join(__dirname, "public"),
-      disableHostCheck: true,
-      open: true,
-      hot: true,
-    },
-
-    plugins: [
-      !isEnvProduction ? void 0 : new CleanWebpackPlugin(),
-
-      !isEnvProduction
-        ? void 0
-        : new CopyPlugin({
-            patterns: [{ from: "public" }],
-          }),
-
-      new DefinePlugin({
-        ...Object.entries(envConfig).reduce((obj, [key, val]) => {
-          obj[`process.env.${key}`] = JSON.stringify(val);
-          return obj;
-        }, {}),
-      }),
-
-      new HtmlWebpackPlugin({
-        title: "Hello webpack",
-        template: "./src/template/index.html",
-        chunks: ["main"],
-        filename: "index.html",
-      }),
-
-      !isEnvProduction
-        ? void 0
-        : new MiniCssExtractPlugin({
-            filename: "css/[name].[contenthash].css",
-          }),
-
-      !isEnvProduction ? new ReactRefreshWebpackPlugin() : void 0,
-
-      !isEnvProduction
-        ? void 0
-        : new GenerateSW({
-            clientsClaim: true,
-            skipWaiting: false,
-          }),
-    ].filter(Boolean),
-
-    optimization: {
-      runtimeChunk: "single",
-      minimize: isEnvProduction,
-      minimizer: !isEnvProduction ? void 0 : ["...", new CssMinimizerPlugin()],
-      splitChunks: !isEnvProduction
-        ? false
-        : {
-            cacheGroups: {
-              vendor: {
-                test: /[\\/]node_modules[\\/]/,
-                name: "vendors",
-                chunks: "all",
-              },
+  module: {
+    rules: [
+      {
+        test: /\.[jt]sx?$/,
+        exclude,
+        use: [
+          "cache-loader",
+          "thread-loader",
+          "babel-loader",
+          {
+            loader: "ts-loader",
+            options: {
+              happyPackMode: true,
+              getCustomTransformers: path.join(
+                __dirname,
+                "./webpack.ts-transformers"
+              ),
             },
           },
+        ],
+      },
+
+      {
+        test: /\.css$/,
+        use: [
+          isDev
+            ? "style-loader"
+            : {
+                loader: MiniCssExtractPlugin.loader,
+                options: {
+                  publicPath: "../",
+                },
+              },
+          "css-loader",
+          "postcss-loader",
+        ],
+      },
+
+      {
+        test: /\.(png|svg|jpe?g|gif)$/,
+        type: "asset",
+      },
+
+      {
+        test: /\.(woff|woff2|eot|ttf|otf)$/,
+        type: "asset",
+      },
+    ],
+  },
+
+  resolve: {
+    extensions: [".tsx", ".ts", ".js", ".json"],
+    alias: {
+      assets: path.join(__dirname, "src/assets"),
+      lib: path.join(__dirname, "src/lib"),
     },
-  };
+  },
+
+  devtool: isDev ? "eval-source-map" : false,
+
+  devServer: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+        secure: false,
+      },
+    },
+    publicPath: "/",
+    contentBase: path.join(__dirname, "public"),
+    disableHostCheck: true,
+    hot: true,
+  },
+
+  plugins: [
+    isDev
+      ? null
+      : new CopyPlugin({
+          patterns: [{ from: "public" }],
+        }),
+
+    new DefinePlugin({
+      ...Object.entries(envConfig).reduce((obj, [key, val]) => {
+        obj[`process.env.${key}`] = JSON.stringify(val);
+        return obj;
+      }, {}),
+    }),
+
+    new HtmlWebpackPlugin({
+      template: "./src/index.html",
+      chunks: ["index"],
+      filename: "index.html",
+    }),
+
+    isDev
+      ? null
+      : new MiniCssExtractPlugin({
+          filename: "css/[name].[contenthash].css",
+        }),
+
+    isDev
+      ? new ForkTsCheckerWebpackPlugin({
+          typescript: {
+            diagnosticOptions: {
+              semantic: true,
+              syntactic: true,
+            },
+          },
+        })
+      : null,
+
+    isDev ? new ReactRefreshWebpackPlugin() : null,
+  ].filter((_) => _ != null),
+
+  optimization: {
+    moduleIds: "deterministic",
+    runtimeChunk: "single",
+    minimize: !isDev,
+    minimizer: ["...", new CssMinimizerPlugin()],
+    splitChunks: {
+      cacheGroups: {
+        vendor: {
+          test: /[\\/]node_modules[\\/](core-js|react|react-dom|react-router-dom)[\\/]/,
+          name: "vendor",
+          chunks: "all",
+        },
+      },
+    },
+  },
 };
