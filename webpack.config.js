@@ -155,9 +155,14 @@ module.exports = {
     minimizer: ["...", new CssMinimizerPlugin()],
     splitChunks: {
       cacheGroups: {
-        vendor: {
-          test: /[\\/]node_modules[\\/](core-js|react|react-dom|react-router-dom)[\\/]/,
-          name: "vendor",
+        polyfill: {
+          test: /[\\/]node_modules[\\/]core-js[\\/]/,
+          name: "polyfill",
+          chunks: "all",
+        },
+        reactBucket: {
+          test: /[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom)[\\/]/,
+          name: "react-bucket",
           chunks: "all",
         },
       },

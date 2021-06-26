@@ -9,7 +9,7 @@
     "postpublish": "pinst --enable",
     "dev": "webpack serve",
     "build": "cross-env NODE_ENV=production webpack --progress",
-    "build:analyze": "webpack --env production --progress=profile --analyze"
+    "build:analyze": "cross-env NODE_ENV=production webpack --progress=profile --analyze"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,json,html,css,json,md}": "prettier --write"
