@@ -4,9 +4,7 @@
   "private": true,
   "description": "",
   "scripts": {
-    "postinstall": "husky install",
-    "prepublishOnly": "pinst --disable",
-    "postpublish": "pinst --enable",
+    "prepare": "husky install",
     "dev": "webpack serve",
     "build": "cross-env NODE_ENV=production webpack --progress",
     "build:analyze": "cross-env NODE_ENV=production webpack --progress=profile --analyze"
@@ -38,7 +36,6 @@
     "husky": "^6.0.0",
     "lint-staged": "^11.0.0",
     "mini-css-extract-plugin": "^1.6.1",
-    "pinst": "^2.1.6",
     "postcss": "^8.3.5",
     "postcss-loader": "^6.1.0",
     "prettier": "^2.3.2",
