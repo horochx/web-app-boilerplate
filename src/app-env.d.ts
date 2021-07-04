@@ -10,9 +10,9 @@ declare namespace NodeJS {
   }
 }
 
-declare var process: NodeJS.Process;
+declare const process: NodeJS.Process;
 
 declare module "*.svg" {
-  const content: any;
+  const content: string;
   export default content;
 }
