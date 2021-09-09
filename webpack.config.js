@@ -95,17 +95,30 @@ module.exports = {
   devtool: isDev ? "eval-source-map" : false,
 
   devServer: {
+    allowedHosts: "all",
+    client: {
+      overlay: true,
+      progress: true,
+    },
+    devMiddleware: {
+      index: true,
+      publicPath: "/",
+    },
+    host: "0.0.0.0",
+    port: "auto",
+    hot: true,
     proxy: {
       "/api": {
         target: "http://localhost:3000",
+        pathRewrite: { "^/api": "" },
         changeOrigin: true,
         secure: false,
+        ws: true,
       },
     },
-    publicPath: "/",
-    contentBase: path.join(__dirname, "public"),
-    disableHostCheck: true,
-    hot: true,
+    static: {
+      directory: path.join(__dirname, "public"),
+    },
   },
 
   plugins: [
@@ -145,7 +158,7 @@ module.exports = {
         })
       : null,
 
-    isDev ? new ReactRefreshWebpackPlugin() : null,
+    isDev ? new ReactRefreshWebpackPlugin({ overlay: false }) : null,
   ].filter((_) => _ != null),
 
   optimization: {
